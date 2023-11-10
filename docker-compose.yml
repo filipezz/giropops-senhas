@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    image: filipez/giropops-senhas:1.0
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    networks:
+      - app-network
+
+  redis:
+    container_name: redis
+    image: "cgr.dev/chainguard/redis"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
