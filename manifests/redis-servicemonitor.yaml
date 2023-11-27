@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: redis-servicemonitor
+  name: redis-servicemonitor
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: redis-headless-service
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: exporter-port
+    interval: 30s
+
+
+    

@@ -1,0 +1,99 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: redis-prometheusrules
+  namespace: monitoring
+  labels:
+    app: redis-prometheusrules
+spec:
+  groups:
+  - name: redis.rules
+    rules:
+    - alert: RedisDown
+      expr: redis_up == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: Redis instance {{ $labels.instance }} down
+        description: Redis instance {{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.
+    - alert: HighClientConnections
+      expr: redis_connected_clients > 10000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High number of Redis client connections (instance {{ $labels.instance }})"
+        description: "Redis client connections are high for the last 5 minutes (current value is {{ $value }})"
+
+    - alert: RedisClusterDown
+      expr: redis_cluster_status != 1
+      for: 3m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Redis cluster is down (instance {{ $labels.instance }})"
+        description: "Redis cluster status is not OK for the last 3 minutes"
+
+    - alert: HighNetworkIO
+      expr: rate(redis_network_bytes_received_total[5m]) + rate(redis_network_bytes_sent_total[5m]) > 10000000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Redis network I/O (instance {{ $labels.instance }})"
+        description: "Redis network I/O is high, potentially exceeding the maximum bandwidth"
+
+    - alert: HighMemoryUtilization
+      expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Redis memory utilization (instance {{ $labels.instance }})"
+        description: "Redis memory utilization is over 80%"
+
+    - alert: RedisBGSAVEInProgress
+      expr: redis_rdb_bgsave_in_progress == 1
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Redis BGSAVE in progress (instance {{ $labels.instance }})"
+        description: "Redis BGSAVE operation is in progress for an extended time"
+
+    - alert: HighEvictionKeys
+      expr: increase(redis_evicted_keys_total[1h]) > 1000
+      for: 1h
+      labels:
+        severity: warning
+      annotations:
+        summary: "High number of Redis key evictions (instance {{ $labels.instance }})"
+        description: "A large number of keys are being evicted, which may impact performance"
+
+    - alert: HighSETOperations
+      expr: rate(redis_commands_total{command="set"}[5m]) > rate(redis_commands_total{command="get"}[5m])
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High number of Redis SET operations (instance {{ $labels.instance }})"
+        description: "Redis SET operations are outnumbering GET operations"
+
+    - alert: RedisSlowLog
+      expr: increase(redis_slowlog_length[10m]) > 10
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High number of slow Redis queries (instance {{ $labels.instance }})"
+        description: "The length of the Redis slow log is increasing, indicating potential performance issues"
+
+    - alert: HighRedisThroughput
+      expr: rate(redis_commands_processed_total[5m]) > 10000
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Redis command throughput (instance {{ $labels.instance }})"
+        description: "Redis is processing a high number of commands"
