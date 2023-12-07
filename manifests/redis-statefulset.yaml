@@ -15,6 +15,14 @@ spec:
       labels:
         app: redis
     spec:
+      initContainers:
+      - name: volume-permissions
+        image: busybox
+        command: ['sh', '-c', 'chown -R 65532:65532 /data']
+        volumeMounts:
+        - name: redis-persistent-storage
+          mountPath: /data
+
       containers:
       - name: redis
         image: cgr.dev/chainguard/redis
