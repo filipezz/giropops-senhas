@@ -1,0 +1,64 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: giropops-prometheusrules
+  namespace: monitoring
+  labels:
+    app: giropops-prometheusrules
+spec:
+  groups:
+  - name: giropops.rules
+    rules:
+    - alert: AppDown
+      expr: up{job="your-python-app"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Giropops App Down"
+        description: "The Giropops application is down."
+    
+    - alert: HighMemoryUsage
+      expr: process_resident_memory_bytes > (1 * 1024 * 1024 * 1024) 
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage in Python application"
+        description: "The Python application is using more than 1GB of RAM."
+    
+    - alert: HighCpuUsage
+      expr: rate(process_cpu_seconds_total[5m]) > 0.9
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage in Python application"
+        description: "CPU usage of the Python application has been high for the last 10 minutes."
+    
+    - alert: HighPasswordGenerationRate
+      expr: rate(senha_gerada_total[5m]) > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High password generation rate"
+        description: "Password generation rate is unusually high, more than 100 passwords per minute."
+    
+    - alert: HighErrorRate
+      expr: sum(rate(http_requests_total{job="your-python-app", status=~"5.."}[5m])) / sum(rate(http_requests_total{job="your-python-app"}[5m])) > 0.01
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High Error Rate in Python App"
+        description: "More than 1% of all requests are resulting in 5xx errors."
+
+    - alert: HighResponseTime
+      expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="your-python-app"}[5m])) by (le)) > 1
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Response Time in Python App"
+        description: "95% of requests have a response time higher than 1 second."
