@@ -5,7 +5,7 @@ metadata:
   labels:
     app: giropops-deployment
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: giropops-senhas
@@ -26,10 +26,10 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: 400m
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "128Mi"  
+            cpu: 400m
         livenessProbe:
           httpGet:
             path: /

@@ -9,7 +9,7 @@ spec:
     app: giropops-senhas
   ports:
   - port: 5000
-    name: tcp-app
+    name: http
     targetPort: 5000
     protocol: TCP
   type: ClusterIP
