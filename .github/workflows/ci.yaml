@@ -11,13 +11,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Change dir
+      run: cd src
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.12'
-
-    - name: Change dir
-      run: cd src
 
     - name: Install dependencies
       run: pip install -r requirements.txt
