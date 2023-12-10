@@ -33,7 +33,6 @@ jobs:
       with:
         context: .
         file: Dockerfile
-        load: true
         push: true
         tags: filipez/giropops-senhas:latest
 
