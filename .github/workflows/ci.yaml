@@ -33,12 +33,26 @@ jobs:
       with:
         context: .
         file: Dockerfile
-        push: true
+        push: false
         tags: filipez/giropops-senhas:latest
 
-
     - name: Scan Docker image for vulnerabilities
+      id: trivy
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'filipez/giropops-senhas:latest'
+        fail-on-severity: 'CRITICAL'
+
+    - name: Print Trivy results
+      run: echo "${{ steps.trivy.outputs.results }}"
+
+    - name: Build and push Docker image
+      if: steps.trivy.outcome == 'success'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: Dockerfile
+        push: true
+        tags: filipez/giropops-senhas:latest
+
 
