@@ -35,7 +35,6 @@ jobs:
     - name: Build Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
         file: Dockerfile
         push: false
         tags: filipez/giropops-senhas:latest
@@ -51,7 +50,6 @@ jobs:
       if: steps.trivy.outcome == 'success'
       uses: docker/build-push-action@v5
       with:
-        context: .
         file: Dockerfile
         push: true
         tags: filipez/giropops-senhas:latest
