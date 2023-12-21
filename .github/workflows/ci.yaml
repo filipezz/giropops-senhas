@@ -47,6 +47,7 @@ jobs:
       if: steps.trivy.outcome == 'success'
       uses: docker/build-push-action@v5
       with:
+        context: src
         file: src/Dockerfile
         push: true
         tags: filipez/giropops-senhas:latest
