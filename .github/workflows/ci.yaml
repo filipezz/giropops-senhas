@@ -31,7 +31,7 @@ jobs:
     - name: Build Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: src
         file: src/Dockerfile
         push: false
         tags: filipez/giropops-senhas:latest
