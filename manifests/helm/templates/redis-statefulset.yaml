@@ -6,7 +6,7 @@ metadata:
     app: redis-statefulset
 spec:
   serviceName: redis-headless-service
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: redis
