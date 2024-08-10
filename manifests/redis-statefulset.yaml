@@ -20,7 +20,7 @@ spec:
         image: busybox
         command: ['sh', '-c', 'chown -R 65532:65532 /data']
         volumeMounts:
-        - name: redis-storage
+        - name: redis-persistent-storage
           mountPath: /data
 
       containers:
@@ -51,7 +51,7 @@ spec:
         - containerPort: 6379
           name: http
         volumeMounts:
-        - name: redis-storage
+        - name: redis-persistent-storage
           mountPath: /data
       - name: redis-exporter
         image: oliver006/redis_exporter
@@ -61,6 +61,11 @@ spec:
         env:
         - name: REDIS_ADDR
           value: localhost:6379
-      volumes:
-      - name: redis-storage
-        emptyDir: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 250Mi
