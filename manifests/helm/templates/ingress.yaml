@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: giropops-ingress
+  labels:
+    app: giropops-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/affinity: "cookie"  
+    nginx.ingress.kubernetes.io/session-cookie-name: "giropops-cookie"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: filipez.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: giropops-service
+            port:
+              number: 5000
+      
